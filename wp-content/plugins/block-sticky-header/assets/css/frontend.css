@@ -1,0 +1,90 @@
+/**
+ * Block Sticky Header – frontend styles
+ * Applied when body has .bsh-enabled; header receives .bsh-header from JS.
+ */
+
+/* Base sticky positioning – JS sets --bsh-top for admin bar offset */
+.bsh-enabled .bsh-header.bsh-stuck {
+	position: sticky;
+	top: var(--bsh-top, 0);
+	z-index: var(--bsh-z-index, 999);
+	transition: transform var(--bsh-transition-duration, 300ms) ease,
+	            box-shadow var(--bsh-transition-duration, 300ms) ease,
+	            background-color var(--bsh-transition-duration, 300ms) ease,
+	            transform-origin var(--bsh-transition-duration, 300ms) ease;
+}
+
+/* Hide on scroll down: move up off-screen */
+.bsh-enabled .bsh-header.bsh-stuck.bsh-hidden {
+	transform: translateY(-100%);
+}
+
+/* Sticky background + shadow (when enabled via options) */
+.bsh-enabled .bsh-header.bsh-stuck.bsh-has-bg {
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Chameleon mode: adapt text and link colours based on detected section background */
+.bsh-enabled .bsh-header.bsh-stuck.bsh-chameleon {
+	color: var(--bsh-text-color) !important;
+	transition: background-color var(--bsh-transition-duration, 300ms) ease,
+	            color var(--bsh-transition-duration, 300ms) ease,
+	            box-shadow var(--bsh-transition-duration, 300ms) ease;
+}
+.bsh-enabled .bsh-header.bsh-stuck.bsh-chameleon a,
+.bsh-enabled .bsh-header.bsh-stuck.bsh-chameleon button,
+.bsh-enabled .bsh-header.bsh-stuck.bsh-chameleon .wp-block-navigation-item__content,
+.bsh-enabled .bsh-header.bsh-stuck.bsh-chameleon .wp-block-navigation__responsive-container-open,
+.bsh-enabled .bsh-header.bsh-stuck.bsh-chameleon .wp-block-navigation__responsive-container-close {
+	color: var(--bsh-text-color) !important;
+}
+
+/* Custom background color + opacity: override theme's inner element backgrounds so opacity is visible */
+.bsh-enabled .bsh-header.bsh-stuck.bsh-custom-bg {
+	background-color: var(--bsh-bg) !important;
+}
+.bsh-enabled .bsh-header.bsh-stuck.bsh-custom-bg > .has-background,
+.bsh-enabled .bsh-header.bsh-stuck.bsh-custom-bg > [class*="has-"][class*="-background"] {
+	background-color: transparent !important;
+	background-image: none !important;
+}
+
+/* Blur on scroll: pseudo-element ensures blur works when theme adds opaque backgrounds to header children */
+.bsh-enabled .bsh-header.bsh-stuck.bsh-blur {
+	background-color: transparent !important; /* Let ::before frosted layer show through */
+}
+/* Theme wrappers (e.g. .has-background) must be transparent so blur is visible */
+.bsh-enabled .bsh-header.bsh-stuck.bsh-blur > .has-background,
+.bsh-enabled .bsh-header.bsh-stuck.bsh-blur > [class*="has-"][class*="-background"] {
+	background-color: transparent !important;
+	background-image: none !important;
+}
+.bsh-enabled .bsh-header.bsh-stuck.bsh-blur::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	-webkit-backdrop-filter: blur(var(--bsh-blur-px, 10px));
+	backdrop-filter: blur(var(--bsh-blur-px, 10px));
+	background-color: var(--bsh-bg, rgba(255, 255, 255, 0.75));
+}
+
+/* Overlay mode: header floats over first content section (transparent header pattern) */
+.bsh-overlay {
+	overflow-x: clip; /* Prevent horizontal scroll from negative margin pull-up */
+}
+
+/* Push content down: spacer added by JS */
+.bsh-enabled .bsh-content-spacer {
+	display: block;
+	width: 100%;
+	height: 0;
+	pointer-events: none;
+}
+
+/* Respect reduced motion: disable transitions */
+@media (prefers-reduced-motion: reduce) {
+	.bsh-enabled .bsh-header.bsh-stuck {
+		transition: none;
+	}
+}
